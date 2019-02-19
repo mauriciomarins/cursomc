@@ -19,36 +19,39 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.mauricio.cursomc.domain.Categoria;
+import com.mauricio.cursomc.domain.Cliente;
 import com.mauricio.cursomc.dto.CategoriaDto;
-import com.mauricio.cursomc.services.CategoriaService;
+import com.mauricio.cursomc.dto.ClienteDto;
+import com.mauricio.cursomc.dto.ClienteNewDto;
+import com.mauricio.cursomc.services.ClienteService;
 import com.mauricio.cursomc.services.exceptions.DataIntegrityException;
 
 @RestController
-@RequestMapping(value="/categorias")
-public class CategoriaResource {
+@RequestMapping(value="/clientes")
+public class ClienteResource {
 	
 	@Autowired
-	private CategoriaService service;
+	private ClienteService service;
 	
 	@RequestMapping(value="/{id}",method=RequestMethod.GET)
-	public ResponseEntity<Categoria> find(@PathVariable Integer id) {
+	public ResponseEntity<Cliente> find(@PathVariable Integer id) {
 		
-		Categoria obj = service.find(id);
+		Cliente obj = service.find(id);
 		
 	return ResponseEntity.ok().body(obj);	
 	}
 	
 	@RequestMapping(method=RequestMethod.POST)
-	public ResponseEntity<Void> insert(@Valid @RequestBody CategoriaDto objDto){
-		Categoria obj = service.fromDTO(objDto);
+	public ResponseEntity<Void> insert(@Valid @RequestBody ClienteNewDto objDto){
+		Cliente obj = service.fromDTO(objDto);
 		obj = service.insert(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
-	public ResponseEntity<Void> update(@Valid @RequestBody CategoriaDto objDto,@PathVariable Integer id){
-		Categoria obj = service.fromDTO(objDto);
+	public ResponseEntity<Void> update(@Valid @RequestBody ClienteDto objDto,@PathVariable Integer id){
+		Cliente obj = service.fromDTO(objDto);
 		obj.setId(id);
 		obj = service.update(obj);
 		return ResponseEntity.noContent().build();
@@ -66,22 +69,22 @@ public class CategoriaResource {
 	}
 	
 	@RequestMapping(method=RequestMethod.GET)
-	public ResponseEntity<List<CategoriaDto>> findAll() {
+	public ResponseEntity<List<ClienteDto>> findAll() {
 		
-		List<Categoria> list = service.findAll();
-		List<CategoriaDto> listDto =  list.stream().map(obj -> new CategoriaDto(obj)).collect(Collectors.toList()); // java 8 , stream varrer lista
+		List<Cliente> list = service.findAll();
+		List<ClienteDto> listDto =  list.stream().map(obj -> new ClienteDto(obj)).collect(Collectors.toList()); // java 8 , stream varrer lista
 	return ResponseEntity.ok().body(listDto);	
 	}
 
 	@RequestMapping(value="/page",method=RequestMethod.GET)
-	public ResponseEntity<Page<CategoriaDto>> findPage(
+	public ResponseEntity<Page<ClienteDto>> findPage(
 			@RequestParam(value="page", 		defaultValue="0") Integer page,  //Essa anotação faz com que o parametro seja opcional
 			@RequestParam(value="linesPerPage", defaultValue="24") Integer linesPerPage,
 			@RequestParam(value="orderBy", 		defaultValue="nome") String orderBy, 
 			@RequestParam(value="direction", 	defaultValue="ASC") String direction) {
 		
-		Page<Categoria> list = service.findPage(page, linesPerPage, orderBy, direction);
-		Page<CategoriaDto> listDto =  list.map(obj -> new CategoriaDto(obj)); // java 8 , stream varrer lista
+		Page<Cliente> list = service.findPage(page, linesPerPage, orderBy, direction);
+		Page<ClienteDto> listDto =  list.map(obj -> new ClienteDto(obj)); // java 8 , stream varrer lista
 		return ResponseEntity.ok().body(listDto);	
 	}
 }
